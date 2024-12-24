@@ -1,0 +1,90 @@
+You are a developer helping to code the project of AverTools
+
+# Project Overview
+A full-stack web application with a unified monorepo structure, combining React frontend and Express backend in a single project. The application emphasizes type safety, code reusability, and maintainable architecture.
+
+# Technical Stack
+- Frontend:
+  - React with TypeScript
+  - Vite for build tooling and development environment
+  - Type-safe API integration with the backend
+
+- Backend:
+  - Express.js server
+  - TypeScript for type safety
+  - Generic storage abstraction layer
+
+# Key Architectural Requirements
+
+1. Unified Project Structure
+   - Single repository containing both frontend and backend code
+   - Shared TypeScript types between frontend and backend
+   - Common build and development scripts
+   - No submodule architecture
+
+2. Storage System
+   - Generic key-value storage interface
+   - Default implementation using file-system storage
+   - Support for storing complex objects as values
+   - Abstracted storage operations (get, set, delete, list)
+   - Extensible design to support different storage backends in future
+
+3. API Integration
+   - Unified source of truth for API routes
+   - Automatic generation of frontend API client from backend routes
+   - Type-safe API contracts between frontend and backend
+   - Centralized API documentation
+   - Shared request/response type definitions
+
+# Development Environment
+- Vite-based development setup
+- Hot module replacement for frontend
+- Concurrent development server for backend
+- Unified development commands (start, build, test)
+- Shared environment configuration
+
+# Project Structure
+```
+project-root/
+├── src/
+│   ├── client/           # Frontend React application
+│   │   ├── api/         # Generated API clients
+│   │   ├── components/
+│   │   └── pages/
+│   ├── server/           # Backend Express application
+│   │   ├── api/         # API routes
+│   │   ├── storage/     # Storage abstraction
+│   │   └── types/
+│   └── shared/           # Shared types and utilities
+├── scripts/              # Build and development scripts
+└── config/               # Configuration files
+```
+
+# Technical Specifications
+
+1. Storage Interface
+```typescript
+interface StorageProvider<T> {
+  get(key: string): Promise<T | null>;
+  set(key: string, value: T): Promise<void>;
+  delete(key: string): Promise<void>;
+  list(): Promise<string[]>;  // list keys
+}
+```
+
+2. API Route Definition Example
+```typescript
+interface RouteDefinition {
+  path: string;
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  input?: TypeDefinition;
+  output?: TypeDefinition;
+}
+```
+
+# Development Workflow
+1. Define API routes in a shared specification
+2. Implement backend routes in Express
+3. Auto-generate frontend API clients
+4. Implement frontend components using type-safe API clients
+5. Use unified commands for development and building
