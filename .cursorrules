@@ -60,27 +60,8 @@ project-root/
 └── config/               # Configuration files
 ```
 
-# Technical Specifications
-
-1. Storage Interface
-```typescript
-interface StorageProvider<T> {
-  get(key: string): Promise<T | null>;
-  set(key: string, value: T): Promise<void>;
-  delete(key: string): Promise<void>;
-  list(): Promise<string[]>;  // list keys
-}
-```
-
-2. API Route Definition Example
-```typescript
-interface RouteDefinition {
-  path: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  input?: TypeDefinition;
-  output?: TypeDefinition;
-}
-```
+client and server will have their own tsconfig.json files, their own build, dev, and start scripts. The shared folder will have its own tsconfig.json file, and will compile as a library.
+ The common build, dev, and start scripts will call the build, client, and server scripts.
 
 # Development Workflow
 1. Define API routes in a shared specification

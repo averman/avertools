@@ -1,19 +1,39 @@
 {
   "name": "avertools",
-  "version": "1.0.0",
-  "description": "collection of tools for me",
-  "main": "index.js",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run build:shared && npm run build:server && npm run build:client",
+    "build:server": "tsc -p tsconfig.server.json",
+    "build:client": "cd src/client && vite build",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "nodemon --watch src/server -e ts,json --exec ts-node --project src/server/tsconfig.json src/server/index.ts",
+    "dev:client": "cd src/client && vite",
+    "start": "node dist/server/index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/averman/avertools.git"
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.1.1",
+    "uuid": "^11.0.3"
   },
-  "author": "averman",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/averman/avertools/issues"
-  },
-  "homepage": "https://github.com/averman/avertools#readme"
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.0",
+    "@types/node": "^20.11.24",
+    "@types/react": "^18.2.61",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4"
+  }
 }
