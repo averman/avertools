@@ -1,0 +1,35 @@
+.tag-input {
+  margin: 10px 0;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.tag {
+  background-color: #e0e0e0;
+  border-radius: 15px;
+  padding: 2px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.tag button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.note-tags {
+  margin-top: 8px;
+}
+
+.search-section {
+  margin-bottom: 20px;
+} 

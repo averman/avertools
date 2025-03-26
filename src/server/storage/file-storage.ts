@@ -66,6 +66,7 @@ export class FileStorage<T> implements Storage<T> {
     
     for (const key of files) {
       const item = await this.get(key);
+      console.log('Querying item:', item);
       if (item && predicate(item)) {
         items.push(item);
       }

@@ -1,41 +1,29 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, LoginRequest } from '../../../shared/types/auth';
-import React from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 interface AuthContextType {
-  user: Omit<User, 'passwordHash'> | null;
   token: string | null;
-  login: (credentials: LoginRequest) => Promise<void>;
-  register: (credentials: LoginRequest) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  isLoading: boolean;
+  register: (email: string, password: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<Omit<User, 'passwordHash'> | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const apiBaseUrl = import.meta.env.VITE_API_URL || '';
 
-  useEffect(() => {
-    // Check localStorage for existing session
-    const savedToken = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
-    
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
-    }
-    setIsLoading(false);
-  }, []);
-
-  const login = async (credentials: LoginRequest) => {
+  const login = useCallback(async (username: string, password: string) => {
+    console.log('apiBaseUrl', apiBaseUrl);
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ username, password }),
       });
 
       if (!response.ok) {
@@ -44,21 +32,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json();
       setToken(data.token);
-      setUser(data.user);
       localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      return data;
     } catch (error) {
       console.error('Login error:', error);
       throw error;
     }
-  };
+  }, [apiBaseUrl]);
 
-  const register = async (credentials: LoginRequest) => {
+  const register = useCallback(async (email: string, password: string) => {
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch(`${apiBaseUrl}/api/auth/register`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
@@ -67,33 +57,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json();
       setToken(data.token);
-      setUser(data.user);
       localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
     }
-  };
+  }, [apiBaseUrl]);
 
-  const logout = () => {
+  const resetPassword = useCallback(async (email: string) => {
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Password reset request failed');
+      }
+    } catch (error) {
+      console.error('Password reset error:', error);
+      throw error;
+    }
+  }, [apiBaseUrl]);
+
+  const logout = useCallback(() => {
     setToken(null);
-    setUser(null);
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
-  };
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, isLoading }}>
+    <AuthContext.Provider value={{ token, login, logout, register, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}; 
+} 

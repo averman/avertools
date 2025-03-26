@@ -1,0 +1,12 @@
+.note-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8em;
+  color: #666;
+}
+
+.note-version {
+  color: #999;
+  font-size: 0.9em;
+} 

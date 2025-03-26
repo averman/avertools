@@ -1,0 +1,13 @@
+{
+  "id": "b37a8d5e-fc72-4499-9c66-07ad23d85821",
+  "title": "Note Title",
+  "content": "NOTE CONTENT",
+  "tags": [
+    "tag1",
+    "tag2"
+  ],
+  "version": "note version",
+  "createdAt": "2025-01-06T10:23:42.129Z",
+  "updatedAt": "2025-01-06T10:43:49.591Z",
+  "userId": "afe6db69-3bcc-4c48-a615-bcf32989d509"
+}

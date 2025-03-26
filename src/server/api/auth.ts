@@ -9,10 +9,11 @@ const router = Router();
 const userStorage = new FileStorage<User>('users');
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-// Register endpoint
+// Public routes - no authorization required
 router.post('/auth/register', async (req, res) => {
   try {
-    const { username, password } = req.body as LoginRequest;
+    const { email, password } = req.body;
+    const username = email; // Use email as username
     
     // Check if username already exists
     const existingUsers = await userStorage.query(user => user.username === username);
@@ -35,7 +36,8 @@ router.post('/auth/register', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { id: user.id, username: user.username, role: user.role },
-      JWT_SECRET
+      JWT_SECRET,
+      { expiresIn: '24h' }
     );
 
     // Return user info and token (excluding password hash)
@@ -53,14 +55,17 @@ router.post('/auth/register', async (req, res) => {
   }
 });
 
-// Login endpoint
+// Public route - no authorization required
 router.post('/auth/login', async (req, res) => {
   try {
-    const { username, password } = req.body as LoginRequest;
+    console.log('Login attempt:', req.body);
+    const { username, password } = req.body;
     
-    // Find user by username
+    // Find user by username/email\
     const users = await userStorage.query(user => user.username === username);
     const user = users[0];
+
+    console.log('Login attempt:', { username, userFound: !!user });
 
     // Check if user exists and password is correct
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
@@ -70,10 +75,18 @@ router.post('/auth/login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { id: user.id, username: user.username, role: user.role },
-      JWT_SECRET
+      JWT_SECRET,
+      { expiresIn: '24h' }
     );
 
     // Return user info and token (excluding password hash)
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
     res.json({
       token,
       user: {

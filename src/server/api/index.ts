@@ -1,11 +1,10 @@
 import { Router } from 'express';
 import notesRouter from './notes';
+import authRouter from './auth';
 
-export const apiRouter = Router();
+const router = Router();
 
-apiRouter.use('/notes', notesRouter);
+router.use('/notes', notesRouter);
+router.use('/auth', authRouter);
 
-// Health check endpoint
-apiRouter.get('/health', (_, res) => {
-  res.json({ status: 'ok' });
-}); 
+export default router; 

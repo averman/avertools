@@ -1,20 +1,7 @@
-import express from 'express';
-import cors from 'cors';
-import authRoutes from './api/auth';
-import notesRoutes from './api/notes';
+import app from './app';
 
-const app = express();
+const port = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.json());
-
-// Mount routes
-app.use('/api', authRoutes);
-app.use('/api', notesRoutes);
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-export default app; 
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+}); 

@@ -16,8 +16,13 @@ export function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(credentials);
-      navigate('/tools');
+      let res = await login(credentials.username, credentials.password);
+      console.log('res', res);
+      
+      setTimeout(() => {
+        navigate('/tools');
+      }, 100);
+      
     } catch (error) {
       setError('Invalid username or password');
     }
